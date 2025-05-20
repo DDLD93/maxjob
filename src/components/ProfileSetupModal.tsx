@@ -111,7 +111,7 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ isOpen, onClose, 
     if (currentStepId === 'profile') {
       if (!member.fullName?.trim()) newErrors.fullName = 'Full name is required.';
       if (!member.email?.trim()) newErrors.email = 'Email is required.';
-      else if (!/S+@S+\.\S+/.test(member.email)) newErrors.email = 'Email is invalid.';
+      // else if (!/S+@S+\.\S+/.test(member.email)) newErrors.email = 'Email is invalid.';
       if (!member.phone?.trim()) newErrors.phone = 'Phone number is required.';
       if (!member.country) newErrors.country = 'Country is required.';
       if (!member.city) newErrors.city = 'City is required.';
