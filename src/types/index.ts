@@ -113,30 +113,37 @@ export interface Job {
   createdAt: Date;
 }
 
-
-export interface Seminar {
+ interface SeminarLocation {
   id: string;
-  title: string;
-  description: string;
-  locationType: 'local' | 'remote';
   country: string;
   city: string;
   address: string;
   date: Date;
-  duration: number;
-  capacity: number;
-  registeredCount: number;
+  duration?: number;
+  capacity?: number;
+  registeredCount?: number;
   price: number;
+  startTime?: string;
+  endTime?: string;
+  status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
+  isActive: boolean;
+}
+
+
+export interface Seminar {
+  id: string;
+  image: string;
+  title: string;
+  description: string;
+  type?: 'webinar' | 'workshop' | 'conference' | 'meetup';
+  locationType: 'local' | 'remote';
   isExclusive: boolean;
   status: 'upcoming' | 'ongoing' | 'completed' | 'cancelled';
   tags?: string[];
-  type?: 'webinar' | 'workshop' | 'conference' | 'meetup';
-  time?: string;
+  time: string;
   isVirtual?: boolean;
-  host?: string;
-  attendees?: number;
-  image?: string;
-  registrationUrl?: string;
+  host: string;
+  locations: SeminarLocation[];
 }
 
 export interface Notification {

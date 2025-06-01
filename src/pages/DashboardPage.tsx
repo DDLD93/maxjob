@@ -139,7 +139,7 @@ const DashboardPage: React.FC = () => {
             <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100">
               <h2 className="text-lg font-bold text-secondary-800 flex items-center">
                 <TrendingUp size={18} className="mr-2 text-primary-600" />
-                Featured Jobs for You
+                Recommended Jobs for You
               </h2>
               <Link to="/explore" className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center">
                 View all <ChevronRight size={16} className="ml-1" />

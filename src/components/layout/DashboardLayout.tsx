@@ -60,9 +60,9 @@ const DashboardLayout: React.FC = () => {
   }
 
   // Redirect to login if not authenticated
-  if (!isAuthenticated) {
-    return <Navigate to="/auth/login" />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/auth/login" />;
+  // }
 
   const toggleSidebar = () => {
     setSidebarOpen(!sidebarOpen);

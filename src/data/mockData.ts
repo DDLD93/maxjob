@@ -446,17 +446,10 @@ export const mockJobs: Job[] = [
 export const mockSeminars: Seminar[] = [
   {
     id: '1',
+    image: 'https://images.unsplash.com/photo-1516841273335-e39b37888115?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     title: 'International Nursing Opportunities: Saudi Arabia Focus',
     description: 'Learn about career opportunities, requirements, and application process for nursing positions in Saudi Arabia',
     locationType: 'local',
-    country: 'Nigeria',
-    city: 'Kano',
-    address: '123 Training Center, Kano',
-    date: new Date(2024, 3, 15),
-    duration: 180, // minutes
-    capacity: 50,
-    registeredCount: 35,
-    price: 15000,
     isExclusive: true,
     status: 'upcoming',
     tags: ['Nursing', 'Saudi Arabia', 'International Jobs', 'Healthcare'],
@@ -464,22 +457,54 @@ export const mockSeminars: Seminar[] = [
     time: '10:00 AM',
     isVirtual: false,
     host: 'Global Healthcare Recruiters',
-    attendees: 35,
-    image: 'https://images.unsplash.com/photo-1516841273335-e39b37888115?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    locations: [
+      {
+        id: 'loc-1',
+        country: 'Nigeria',
+        city: 'Kano',
+        address: '123 Training Center, Kano',
+        date: new Date(2024, 3, 15),
+        duration: 180,
+        capacity: 50,
+        registeredCount: 35,
+        price: 15000,
+        status: 'upcoming',
+        isActive: true
+      },
+      {
+        id: 'loc-2',
+        country: 'Nigeria',
+        city: 'Lagos',
+        address: '45 Medical Avenue, Lagos',
+        date: new Date(2024, 3, 22),
+        duration: 180,
+        capacity: 60,
+        registeredCount: 40,
+        price: 16000,
+        status: 'upcoming',
+        isActive: true
+      },
+      {
+        id: 'loc-3',
+        country: 'Nigeria',
+        city: 'Abuja',
+        address: '78 Health Plaza, Abuja',
+        date: new Date(2024, 3, 29),
+        duration: 180,
+        capacity: 55,
+        registeredCount: 30,
+        price: 15500,
+        status: 'upcoming',
+        isActive: true
+      }
+    ]
   },
   {
     id: '2',
+    image: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     title: 'Security Certification Training for Gulf Countries',
     description: 'Comprehensive training program for security professionals seeking employment in UAE, Qatar, and Saudi Arabia',
     locationType: 'local',
-    country: 'Nigeria',
-    city: 'Lagos',
-    address: '45 Training Center, Lagos',
-    date: new Date(2024, 4, 10),
-    duration: 300,
-    capacity: 100,
-    registeredCount: 78,
-    price: 25000,
     isExclusive: false,
     status: 'upcoming',
     tags: ['Security', 'Certification', 'Gulf Countries', 'International'],
@@ -487,22 +512,41 @@ export const mockSeminars: Seminar[] = [
     time: '9:00 AM',
     isVirtual: false,
     host: 'International Security Association',
-    attendees: 78,
-    image: 'https://images.unsplash.com/photo-1590856029826-c7a73142bbf1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    locations: [
+      {
+        id: 'loc-4',
+        country: 'Nigeria',
+        city: 'Lagos',
+        address: '45 Training Center, Lagos',
+        date: new Date(2024, 4, 10),
+        duration: 300,
+        capacity: 100,
+        registeredCount: 78,
+        price: 25000,
+        status: 'upcoming',
+        isActive: true
+      },
+      {
+        id: 'loc-5',
+        country: 'Nigeria',
+        city: 'Port Harcourt',
+        address: '12 Security Road, Port Harcourt',
+        date: new Date(2024, 4, 17),
+        duration: 300,
+        capacity: 80,
+        registeredCount: 60,
+        price: 24500,
+        status: 'upcoming',
+        isActive: true
+      }
+    ]
   },
   {
     id: '3',
+    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     title: 'Professional Driving in the Middle East',
     description: 'Learn about driving regulations, cultural expectations, and job opportunities for drivers in Gulf countries',
     locationType: 'local',
-    country: 'Nigeria',
-    city: 'Abuja',
-    address: '78 Career Center, Abuja',
-    date: new Date(2024, 2, 20),
-    duration: 150,
-    capacity: 40,
-    registeredCount: 40,
-    price: 10000,
     isExclusive: true,
     status: 'completed',
     tags: ['Driving', 'Middle East', 'Transportation', 'Professional Skills'],
@@ -510,22 +554,28 @@ export const mockSeminars: Seminar[] = [
     time: '10:30 AM',
     isVirtual: false,
     host: 'Transport Workers Association',
-    attendees: 40,
-    image: 'https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    locations: [
+      {
+        id: 'loc-3',
+        country: 'Nigeria',
+        city: 'Abuja',
+        address: '78 Career Center, Abuja',
+        date: new Date(2024, 2, 20),
+        duration: 150,
+        capacity: 40,
+        registeredCount: 40,
+        price: 10000,
+        status: 'completed',
+        isActive: false
+      }
+    ]
   },
   {
     id: '4',
+    image: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     title: 'Landscape and Gardening Skills for Local Employment',
     description: 'Practical training in landscaping and gardening techniques tailored for Nigerian climate and job market',
     locationType: 'local',
-    country: 'Nigeria',
-    city: 'Kaduna',
-    address: '34 Agricultural Center, Kaduna',
-    date: new Date(2024, 5, 5),
-    duration: 240,
-    capacity: 60,
-    registeredCount: 25,
-    price: 8000,
     isExclusive: false,
     status: 'upcoming',
     tags: ['Gardening', 'Landscaping', 'Agriculture', 'Local Employment'],
@@ -533,22 +583,28 @@ export const mockSeminars: Seminar[] = [
     time: '9:00 AM',
     isVirtual: false,
     host: 'Nigerian Horticultural Society',
-    attendees: 25,
-    image: 'https://images.unsplash.com/photo-1589923188900-85dae523342b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    locations: [
+      {
+        id: 'loc-4',
+        country: 'Nigeria',
+        city: 'Kaduna',
+        address: '34 Agricultural Center, Kaduna',
+        date: new Date(2024, 5, 5),
+        duration: 240,
+        capacity: 60,
+        registeredCount: 25,
+        price: 8000,
+        status: 'upcoming',
+        isActive: true
+      }
+    ]
   },
   {
     id: '5',
+    image: 'https://images.unsplash.com/photo-1516534775068-ba3e7458af70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
     title: 'Working in Qatar: Opportunities and Work Culture',
     description: 'Overview of job opportunities, visa processes, and cultural adaptation for Nigerians seeking work in Qatar',
     locationType: 'remote',
-    country: 'Nigeria',
-    city: 'Online',
-    address: 'Zoom Meeting',
-    date: new Date(2024, 3, 25),
-    duration: 90,
-    capacity: 200,
-    registeredCount: 165,
-    price: 5000,
     isExclusive: false,
     status: 'upcoming',
     tags: ['Qatar', 'International Work', 'Work Culture', 'Job Search'],
@@ -556,8 +612,21 @@ export const mockSeminars: Seminar[] = [
     time: '2:00 PM',
     isVirtual: true,
     host: 'Global Migration Consultants',
-    attendees: 165,
-    image: 'https://images.unsplash.com/photo-1516534775068-ba3e7458af70?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80',
+    locations: [
+      {
+        id: 'loc-5',
+        country: 'Nigeria',
+        city: 'Online',
+        address: 'Zoom Meeting',
+        date: new Date(2024, 3, 25),
+        duration: 90,
+        capacity: 200,
+        registeredCount: 165,
+        price: 5000,
+        status: 'upcoming',
+        isActive: true
+      }
+    ]
   }
 ];
 

@@ -17,20 +17,22 @@ const SeminarsPage: React.FC = () => {
     upcoming: true,
     virtual: false
   });
+  const [selectedLocationId, setSelectedLocationId] = useState<string | null>(null);
 
   useEffect(() => {
     // Use mockSeminars from mockData.ts
     setTimeout(() => {
       setSeminars(mockSeminars);
       setFilteredSeminars(mockSeminars);
-      
       if (id) {
         const seminar = mockSeminars.find(s => s.id === id);
         if (seminar) {
           setActiveSeminar(seminar);
         }
+      } else {
+        setActiveSeminar(null);
+        setSelectedLocationId(null);
       }
-      
       setIsLoading(false);
     }, 500); // Simulate loading
   }, [id]);
@@ -43,7 +45,7 @@ const SeminarsPage: React.FC = () => {
       results = results.filter(seminar => 
         seminar.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         seminar.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        seminar.tags.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase()))
+        (seminar.tags?.some(tag => tag.toLowerCase().includes(searchTerm.toLowerCase())) ?? false)
       );
     }
     
@@ -53,7 +55,9 @@ const SeminarsPage: React.FC = () => {
     
     if (filters.upcoming) {
       const today = new Date();
-      results = results.filter(seminar => new Date(seminar.date) >= today);
+      results = results.filter(seminar =>
+        seminar.locations.some(loc => new Date(loc.date) >= today)
+      );
     }
     
     if (filters.virtual) {
@@ -110,6 +114,8 @@ const SeminarsPage: React.FC = () => {
 
   // Display single seminar view if an ID is provided and seminar is found
   if (activeSeminar) {
+    // Find the selected location (no default)
+    const selectedLocation = activeSeminar.locations.find(loc => loc.id === selectedLocationId);
     return (
       <div className="container mx-auto px-4 py-8">
         <div className="mb-6">
@@ -130,75 +136,125 @@ const SeminarsPage: React.FC = () => {
           
           <div className="p-6">
             <div className="flex flex-wrap gap-2 mb-4">
-              {activeSeminar.tags.map((tag, index) => (
+              {(activeSeminar.tags ?? []).map((tag, index) => (
                 <span key={index} className="text-xs px-3 py-1 rounded-full bg-gray-100 text-gray-800">
                   {tag}
                 </span>
               ))}
-              <span className={`text-xs px-3 py-1 rounded-full ${getSeminarTypeColor(activeSeminar.type)}`}>
-                {activeSeminar.type.charAt(0).toUpperCase() + activeSeminar.type.slice(1)}
+              <span className={`text-xs px-3 py-1 rounded-full ${getSeminarTypeColor(activeSeminar.type ?? '')}`}>
+                {(activeSeminar.type ?? '').charAt(0).toUpperCase() + (activeSeminar.type ?? '').slice(1)}
               </span>
             </div>
             
             <h1 className="text-2xl font-bold mb-2">{activeSeminar.title}</h1>
             <p className="text-gray-600 mb-6">{activeSeminar.description}</p>
             
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <Calendar className="text-gray-400 mr-3 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-medium">Date and Time</h3>
-                    <p className="text-gray-600">{activeSeminar.date}, {activeSeminar.time}</p>
+            {/* Location selection UI as cards */}
+            <div className="mb-6">
+              <label className="block font-medium mb-2">Choose a location:</label>
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                {activeSeminar.locations.map((loc) => {
+                  const isSelected = selectedLocationId === loc.id;
+                  return (
+                    <div
+                      key={loc.id}
+                      className={`cursor-pointer border rounded-lg p-4 shadow-sm transition-all duration-150 ${isSelected ? 'border-primary-600 ring-2 ring-primary-300 bg-primary-50' : 'border-gray-200 bg-white hover:border-primary-400'}`}
+                      onClick={() => setSelectedLocationId(loc.id)}
+                    >
+                      <div className="font-semibold text-primary-700 mb-1">{loc.city}</div>
+                      <div className="text-gray-700 text-sm mb-1">{loc.address}</div>
+                      <div className="text-gray-500 text-xs mb-1">
+                        {loc.date instanceof Date ? loc.date.toLocaleDateString() : new Date(loc.date).toLocaleDateString()} | {loc.duration} min
+                      </div>
+                      <div className="text-gray-500 text-xs mb-1">₦{loc.price.toLocaleString()}</div>
+                      <div className="text-xs text-gray-600">{loc.registeredCount ?? 0} / {loc.capacity ?? 'N/A'} registered</div>
+                      <div className={`mt-2 inline-block px-2 py-1 text-xs rounded ${loc.status === 'upcoming' && loc.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'}`}>{loc.status.charAt(0).toUpperCase() + loc.status.slice(1)}</div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Only show details and Book/Pay if a location is selected */}
+            {selectedLocation && (
+              <>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8">
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <Calendar className="text-gray-400 mr-3 mt-1" size={20} />
+                      <div>
+                        <h3 className="font-medium">Date and Time</h3>
+                        <p className="text-gray-600">{
+                          selectedLocation.date instanceof Date
+                            ? selectedLocation.date.toLocaleDateString()
+                            : new Date(selectedLocation.date).toLocaleDateString()
+                        }, {activeSeminar.time}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <Clock className="text-gray-400 mr-3 mt-1" size={20} />
+                      <div>
+                        <h3 className="font-medium">Duration</h3>
+                        <p className="text-gray-600">{selectedLocation.duration} min</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <Users className="text-gray-400 mr-3 mt-1" size={20} />
+                      <div>
+                        <h3 className="font-medium">Capacity</h3>
+                        <p className="text-gray-600">{selectedLocation.registeredCount ?? 0} / {selectedLocation.capacity ?? 'N/A'} registered</p>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div className="flex items-start">
+                      <MapPin className="text-gray-400 mr-3 mt-1" size={20} />
+                      <div>
+                        <h3 className="font-medium">Location</h3>
+                        <p className="text-gray-600">
+                          {selectedLocation.address}, {selectedLocation.city}, {selectedLocation.country}
+                          {activeSeminar.isVirtual && ' (Virtual)'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    <div className="flex items-start">
+                      <div>
+                        <h3 className="font-medium">Price</h3>
+                        <p className="text-gray-600">₦{selectedLocation.price.toLocaleString()}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div>
+                        <h3 className="font-medium">Status</h3>
+                        <p className="text-gray-600">{selectedLocation.status.charAt(0).toUpperCase() + selectedLocation.status.slice(1)}</p>
+                      </div>
+                    </div>
+                    <div className="flex items-start">
+                      <div>
+                        <h3 className="font-medium">Host</h3>
+                        <p className="text-gray-600">{activeSeminar.host}</p>
+                      </div>
+                    </div>
                   </div>
                 </div>
                 
-                <div className="flex items-start">
-                  <Clock className="text-gray-400 mr-3 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-medium">Duration</h3>
-                    <p className="text-gray-600">{activeSeminar.duration}</p>
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                  <div className="text-gray-600">
+                    <span className="font-medium">{selectedLocation.registeredCount}</span> people attending
                   </div>
+                  <button
+                    className="inline-flex items-center bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
+                    onClick={() => alert(`Booking for ${activeSeminar.title} at ${selectedLocation.city}, ₦${selectedLocation.price.toLocaleString()}`)}
+                    disabled={selectedLocation.status !== 'upcoming' || !selectedLocation.isActive}
+                  >
+                    Book / Pay
+                  </button>
                 </div>
-              </div>
-              
-              <div className="space-y-4">
-                <div className="flex items-start">
-                  <MapPin className="text-gray-400 mr-3 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-medium">Location</h3>
-                    <p className="text-gray-600">
-                      {activeSeminar.location}
-                      {activeSeminar.isVirtual && ' (Virtual)'}
-                    </p>
-                  </div>
-                </div>
-                
-                <div className="flex items-start">
-                  <Users className="text-gray-400 mr-3 mt-1" size={20} />
-                  <div>
-                    <h3 className="font-medium">Host</h3>
-                    <p className="text-gray-600">{activeSeminar.host}</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-              <div className="text-gray-600">
-                <span className="font-medium">{activeSeminar.attendees}</span> people attending
-              </div>
-              
-              <a 
-                href={activeSeminar.registrationUrl || '#'}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center bg-primary-600 text-white px-6 py-3 rounded-lg hover:bg-primary-700 transition"
-              >
-                Register Now
-                <ExternalLink size={18} className="ml-2" />
-              </a>
-            </div>
+              </>
+            )}
           </div>
         </div>
         
@@ -218,13 +274,17 @@ const SeminarsPage: React.FC = () => {
                     />
                   </div>
                   <div className="p-4">
-                    <span className={`text-xs px-2 py-1 rounded-full ${getSeminarTypeColor(seminar.type)}`}>
-                      {seminar.type.charAt(0).toUpperCase() + seminar.type.slice(1)}
+                    <span className={`text-xs px-2 py-1 rounded-full ${getSeminarTypeColor(seminar.type ?? '')}`}>
+                      {(seminar.type ?? '').charAt(0).toUpperCase() + (seminar.type ?? '').slice(1)}
                     </span>
                     <h3 className="font-semibold mt-2 mb-1">{seminar.title}</h3>
                     <div className="flex items-center text-gray-500 text-sm">
                       <Calendar size={14} className="mr-1" />
-                      <span>{seminar.date}</span>
+                      <span>{
+                        seminar.locations[0].date instanceof Date
+                          ? seminar.locations[0].date.toLocaleDateString()
+                          : new Date(seminar.locations[0].date).toLocaleDateString()
+                      }</span>
                     </div>
                   </div>
                 </Link>
@@ -314,52 +374,62 @@ const SeminarsPage: React.FC = () => {
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredSeminars.map((seminar) => (
-            <Link to={`/seminars/${seminar.id}`} key={seminar.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
-              <div className="h-48 bg-gray-200">
-                <img
-                  src={seminar.image}
-                  alt={seminar.title}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="p-5">
-                <div className="flex justify-between items-start mb-3">
-                  <span className={`text-xs px-2 py-1 rounded-full ${getSeminarTypeColor(seminar.type)}`}>
-                    {seminar.type.charAt(0).toUpperCase() + seminar.type.slice(1)}
-                  </span>
-                  {seminar.isVirtual && (
-                    <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
-                      Virtual
+          {filteredSeminars.map((seminar) => {
+            // Find the soonest upcoming location
+            const today = new Date();
+            const upcomingLocations = seminar.locations.filter(loc => new Date(loc.date) >= today);
+            const soonestLocation = upcomingLocations.length > 0
+              ? upcomingLocations.reduce((a, b) => new Date(a.date) < new Date(b.date) ? a : b)
+              : seminar.locations[0];
+            return (
+              <Link to={`/seminars/${seminar.id}`} key={seminar.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-md transition">
+                <div className="h-48 bg-gray-200">
+                  <img
+                    src={seminar.image}
+                    alt={seminar.title}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div className="p-5">
+                  <div className="flex justify-between items-start mb-3">
+                    <span className={`text-xs px-2 py-1 rounded-full ${getSeminarTypeColor(seminar.type ?? '')}`}>
+                      {(seminar.type ?? '').charAt(0).toUpperCase() + (seminar.type ?? '').slice(1)}
                     </span>
-                  )}
-                </div>
-                <h3 className="font-bold mb-2">{seminar.title}</h3>
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">{seminar.description}</p>
-                
-                <div className="flex flex-wrap gap-y-2 gap-x-4 mb-3 text-sm text-gray-500">
-                  <div className="flex items-center">
-                    <Calendar size={14} className="mr-1" />
-                    <span>{seminar.date}</span>
+                    {seminar.isVirtual && (
+                      <span className="text-xs bg-blue-50 text-blue-600 px-2 py-1 rounded-full">
+                        Virtual
+                      </span>
+                    )}
                   </div>
-                  <div className="flex items-center">
-                    <Clock size={14} className="mr-1" />
-                    <span>{seminar.time}</span>
+                  <h3 className="font-bold mb-2">{seminar.title}</h3>
+                  <p className="text-gray-600 text-sm mb-4 line-clamp-2">{seminar.description}</p>
+                  <div className="flex flex-wrap gap-y-2 gap-x-4 mb-3 text-sm text-gray-500">
+                    <div className="flex items-center">
+                      <Calendar size={14} className="mr-1" />
+                      <span>{
+                        soonestLocation.date instanceof Date
+                          ? soonestLocation.date.toLocaleDateString()
+                          : new Date(soonestLocation.date).toLocaleDateString()
+                      }</span>
+                    </div>
+                    <div className="flex items-center">
+                      <Clock size={14} className="mr-1" />
+                      <span>{seminar.time}</span>
+                    </div>
+                  </div>
+                  <div className="flex justify-between items-center">
+                    <div className="flex items-center text-gray-500 text-sm">
+                      <Users size={14} className="mr-1" />
+                      <span>{soonestLocation.registeredCount} attendees</span>
+                    </div>
+                    <span className="text-primary-600 hover:text-primary-800 text-sm font-medium">
+                      View details
+                    </span>
                   </div>
                 </div>
-                
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center text-gray-500 text-sm">
-                    <Users size={14} className="mr-1" />
-                    <span>{seminar.attendees} attendees</span>
-                  </div>
-                  <span className="text-primary-600 hover:text-primary-800 text-sm font-medium">
-                    View details
-                  </span>
-                </div>
-              </div>
-            </Link>
-          ))}
+              </Link>
+            );
+          })}
         </div>
       )}
     </div>

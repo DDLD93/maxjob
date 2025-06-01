@@ -175,68 +175,147 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ isOpen, onClose, 
     switch (steps[currentStepIndex].id) {
       case 'profile':
         return (
-          <div className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4">
-              <div className="md:col-span-2">
-                <Input label="Full Name" value={member.fullName || ''} onChange={(e) => handleChange('fullName', e.target.value)} required placeholder="e.g. Aisha Bello" error={errors.fullName} />
-              </div>
-              <div>
-                <Input label="Email" value={member.email || ''} onChange={(e) => handleChange('email', e.target.value)} required type="email" placeholder="e.g. aisha@example.com" error={errors.email} />
-              </div>
-              <div>
-                <Input label="Phone" value={member.phone || ''} onChange={(e) => handleChange('phone', e.target.value)} required placeholder="e.g. +234 800 000 0000" error={errors.phone} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
-                <select className="w-full border border-gray-300 rounded-md shadow-sm p-2.5 focus:ring-primary-500 focus:border-primary-500" value={member.gender || ''} onChange={(e) => handleChange('gender', e.target.value as Gender)}>
-                  <option value="">Select gender</option>
-                  <option value="male">Male</option>
-                  <option value="female">Female</option>
-                  <option value="other">Other</option>
-                </select>
-              </div>
-              <div>
-                <Input label="Date of Birth" type="date" value={member.dateOfBirth ? new Date(member.dateOfBirth).toISOString().split('T')[0] : ''} onChange={(e) => handleChange('dateOfBirth', new Date(e.target.value))} />
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
-                <select className={`w-full border ${errors.country ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm p-2.5 focus:ring-primary-500 focus:border-primary-500`} value={member.country || ''} onChange={(e) => { handleChange('country', e.target.value); handleChange('city', ''); }}>
-                  <option value="">Select country</option>
-                  {COUNTRIES.map((country) => (<option key={country} value={country}>{country}</option>))}
-                </select>
-                {renderError('country')}
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                <select className={`w-full border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm p-2.5 focus:ring-primary-500 focus:border-primary-500`} value={member.city || ''} onChange={(e) => handleChange('city', e.target.value)} disabled={!member.country}>
-                  <option value="">Select city</option>
-                  {member.country && CITIES[member.country]?.map((city) => (<option key={city} value={city}>{city}</option>))}
-                </select>
-                {renderError('city')}
-              </div>
-              <div className="md:col-span-2">
-                <Input label="Address (Optional)" value={member.address || ''} onChange={(e) => handleChange('address', e.target.value)} placeholder="e.g. 123 Main Street, Ikeja" />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block text-sm font-medium text-gray-700 mb-1">Languages (Optional)</label>
-                <div className="relative">
-                  <select className="w-full border border-gray-300 rounded-md shadow-sm p-2.5 focus:ring-primary-500 focus:border-primary-500" value="" onChange={(e) => { const newLanguage = e.target.value; if (newLanguage && !member.language?.includes(newLanguage)) { handleArrayChange('language', [...(member.language || []), newLanguage]); }}}>
-                    <option value="">Add a language</option>
-                    {LANGUAGES.filter(lang => !member.language?.includes(lang)).map((language) => (<option key={language} value={language}>{language}</option>))}
-                  </select>
-                </div>
-                {member.language && member.language.length > 0 && (
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {member.language.map((lang) => (
-                      <span key={lang} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-primary-100 text-primary-700">
-                        {lang}
-                        <button type="button" onClick={() => handleArrayChange('language', member.language?.filter(l => l !== lang) || [])} className="ml-1.5 text-primary-600 hover:text-primary-800">
-                          <X size={14} />
-                        </button>
-                      </span>
-                    ))}
+          <div className="w-full max-w-none">
+            <div className="bg-white rounded-lg border border-gray-100 shadow-sm p-4 sm:p-6">
+              <div className="space-y-4 sm:space-y-6">
+                <div className="grid grid-cols-1 gap-4 sm:gap-6">
+                  <div>
+                    <Input 
+                      label="Full Name" 
+                      value={member.fullName || ''} 
+                      onChange={(e) => handleChange('fullName', e.target.value)} 
+                      required 
+                      placeholder="e.g. Aisha Bello" 
+                      error={errors.fullName}
+                    />
                   </div>
-                )}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Input 
+                        label="Email Address" 
+                        value={member.email || ''} 
+                        onChange={(e) => handleChange('email', e.target.value)} 
+                        required 
+                        type="email" 
+                        placeholder="e.g. aisha@example.com" 
+                        error={errors.email} 
+                      />
+                    </div>
+                    <div>
+                      <Input 
+                        label="Phone Number" 
+                        value={member.phone || ''} 
+                        onChange={(e) => handleChange('phone', e.target.value)} 
+                        required 
+                        placeholder="e.g. +234 800 000 0000" 
+                        error={errors.phone} 
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Gender</label>
+                      <select 
+                        className="w-full border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900" 
+                        value={member.gender || ''} 
+                        onChange={(e) => handleChange('gender', e.target.value as Gender)}
+                      >
+                        <option value="">Select gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                    <div>
+                      <Input 
+                        label="Date of Birth" 
+                        type="date" 
+                        value={member.dateOfBirth ? new Date(member.dateOfBirth).toISOString().split('T')[0] : ''} 
+                        onChange={(e) => handleChange('dateOfBirth', new Date(e.target.value))} 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-4">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3">Location Information</h3>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Country</label>
+                      <select 
+                        className={`w-full border ${errors.country ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900`} 
+                        value={member.country || ''} 
+                        onChange={(e) => { handleChange('country', e.target.value); handleChange('city', ''); }}
+                      >
+                        <option value="">Select country</option>
+                        {COUNTRIES.map((country) => (
+                          <option key={country} value={country}>{country}</option>
+                        ))}
+                      </select>
+                      {renderError('country')}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">City</label>
+                      <select 
+                        className={`w-full border ${errors.city ? 'border-red-500' : 'border-gray-300'} rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900`} 
+                        value={member.city || ''} 
+                        onChange={(e) => handleChange('city', e.target.value)} 
+                        disabled={!member.country}
+                      >
+                        <option value="">Select city</option>
+                        {member.country && CITIES[member.country]?.map((city) => (
+                          <option key={city} value={city}>{city}</option>
+                        ))}
+                      </select>
+                      {renderError('city')}
+                    </div>
+                    <div className="sm:col-span-2">
+                      <Input 
+                        label="Address (Optional)" 
+                        value={member.address || ''} 
+                        onChange={(e) => handleChange('address', e.target.value)} 
+                        placeholder="e.g. 123 Main Street, Ikeja" 
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="border-t border-gray-100 pt-4">
+                  <h3 className="text-base font-semibold text-gray-900 mb-3">Languages (Optional)</h3>
+                  <div className="space-y-3">
+                    <select 
+                      className="w-full border border-gray-300 rounded-lg shadow-sm p-2.5 focus:ring-2 focus:ring-primary-500 focus:border-primary-500 text-gray-900" 
+                      value="" 
+                      onChange={(e) => { 
+                        const newLanguage = e.target.value; 
+                        if (newLanguage && !member.language?.includes(newLanguage)) { 
+                          handleArrayChange('language', [...(member.language || []), newLanguage]); 
+                        }
+                      }}
+                    >
+                      <option value="">Add a language</option>
+                      {LANGUAGES.filter(lang => !member.language?.includes(lang)).map((language) => (
+                        <option key={language} value={language}>{language}</option>
+                      ))}
+                    </select>
+                    {member.language && member.language.length > 0 && (
+                      <div className="flex flex-wrap gap-2">
+                        {member.language.map((lang) => (
+                          <span key={lang} className="inline-flex items-center px-2.5 py-1.5 rounded-full text-sm font-medium bg-primary-100 text-primary-800 border border-primary-200">
+                            {lang}
+                            <button 
+                              type="button" 
+                              onClick={() => handleArrayChange('language', member.language?.filter(l => l !== lang) || [])} 
+                              className="ml-1.5 text-primary-600 hover:text-primary-800 transition-colors"
+                            >
+                              <X size={12} />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -536,61 +615,140 @@ const ProfileSetupModal: React.FC<ProfileSetupModalProps> = ({ isOpen, onClose, 
   
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} maxWidth="lg" > 
-      <div className="flex flex-col h-[90vh] sm:h-auto max-h-[680px]">
-        <div className="px-6 py-5 border-b border-gray-200">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-2xl font-bold text-gray-800">
+    <Modal isOpen={isOpen} onClose={onClose} maxWidth="2xl" className="mx-2 sm:mx-4"> 
+      <div className="flex flex-col h-[90vh] max-h-[700px] bg-white overflow-hidden">
+        {/* Header */}
+        <div className="flex-shrink-0 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-b border-gray-200 bg-gradient-to-r from-primary-50 to-secondary-50">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+            <div className="min-w-0 flex-1">
+              <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-900 leading-tight truncate">
                 {steps[currentStepIndex].label}
               </h2>
-              <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-2 py-1 rounded-md">
-                Step {currentStepIndex + 1} of {steps.length}
+              <p className="text-xs sm:text-sm text-gray-600 mt-1 truncate">
+                Complete your profile to unlock opportunities
+              </p>
+            </div>
+            <div className="flex-shrink-0">
+              <span className="text-xs font-medium text-gray-500 bg-white px-2 py-1 rounded-full shadow-sm border whitespace-nowrap">
+                {currentStepIndex + 1} of {steps.length}
               </span>
             </div>
-            <div className="flex items-center w-full space-x-2">
-              {steps.map((stepItem, i) => (
-                <React.Fragment key={stepItem.id}>
-                  <div 
-                    className={`flex-1 flex flex-col items-center cursor-pointer p-2 rounded-lg transition-all duration-200
-                                ${i === currentStepIndex ? 'bg-primary-50' : 'hover:bg-gray-50'}`}
-                    onClick={() => { if (i < currentStepIndex && validateStep()) setCurrentStepIndex(i) }}
+          </div>
+          
+          {/* Progress Steps - Desktop */}
+          <div className="hidden lg:flex items-center mt-4 space-x-1 overflow-x-auto">
+            {steps.map((stepItem, i) => (
+              <React.Fragment key={stepItem.id}>
+                <div 
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-all duration-300 cursor-pointer group flex-shrink-0
+                              ${i === currentStepIndex ? 'bg-primary-100 shadow-sm' : 
+                                i < currentStepIndex ? 'bg-green-50 hover:bg-green-100' : 'hover:bg-gray-50'}`}
+                  onClick={() => { if (i <= currentStepIndex) setCurrentStepIndex(i) }}
+                >
+                  <div className={`rounded-full w-6 h-6 flex items-center justify-center text-xs font-semibold transition-all duration-300 flex-shrink-0
+                                  ${i < currentStepIndex ? 'bg-green-500 text-white' : 
+                                    i === currentStepIndex ? 'bg-primary-600 text-white' : 
+                                    'bg-gray-200 text-gray-500 group-hover:bg-gray-300'}`}
                   >
-                    <div className={`rounded-full w-10 h-10 flex items-center justify-center text-lg font-semibold border-2 transition-all duration-200
-                                    ${i < currentStepIndex ? 'bg-primary-600 text-white border-primary-600' : 
-                                      i === currentStepIndex ? 'bg-primary-600 text-white border-primary-600 scale-110 shadow-lg' : 
-                                      'bg-gray-100 text-gray-500 border-gray-300 group-hover:border-gray-400'}`}
-                    >
-                      {i < currentStepIndex ? <Check size={20} /> : <stepItem.icon size={18} />}
-                    </div>
-                    <span className={`text-xs mt-2 text-center font-medium transition-colors duration-200 ${i === currentStepIndex ? 'text-primary-600' : 'text-gray-600'}`}>
-                      {stepItem.label}
-                    </span>
+                    {i < currentStepIndex ? <Check size={12} /> : <stepItem.icon size={12} />}
                   </div>
-                  {i < steps.length - 1 && (
-                    <div className={`h-1 flex-grow rounded-full mx-1 transition-all duration-300 delay-150
-                                    ${i < currentStepIndex ? 'bg-primary-600' : 'bg-gray-200'}`}
-                                    style={{flexBasis: '50px'}}></div>
-                  )}
-                </React.Fragment>
+                  <span className={`text-xs font-medium transition-colors duration-300 truncate max-w-[80px]
+                                  ${i === currentStepIndex ? 'text-primary-700' : 
+                                    i < currentStepIndex ? 'text-green-700' : 'text-gray-600'}`}>
+                    {stepItem.label}
+                  </span>
+                </div>
+                {i < steps.length - 1 && (
+                  <div className={`h-0.5 w-4 transition-all duration-500 flex-shrink-0
+                                  ${i < currentStepIndex ? 'bg-green-400' : 'bg-gray-200'}`}></div>
+                )}
+              </React.Fragment>
+            ))}
+          </div>
+
+          {/* Progress Steps - Mobile/Tablet */}
+          <div className="lg:hidden mt-3">
+            <div className="flex items-center justify-between overflow-x-auto pb-2">
+              {steps.map((stepItem, i) => (
+                <div key={stepItem.id} className="flex flex-col items-center flex-shrink-0 min-w-0">
+                  <div className={`rounded-full w-6 h-6 flex items-center justify-center text-xs font-semibold transition-all duration-300
+                                  ${i < currentStepIndex ? 'bg-green-500 text-white' : 
+                                    i === currentStepIndex ? 'bg-primary-600 text-white' : 
+                                    'bg-gray-200 text-gray-500'}`}
+                  >
+                    {i < currentStepIndex ? <Check size={10} /> : <stepItem.icon size={10} />}
+                  </div>
+                  <span className={`text-[10px] font-medium mt-1 text-center truncate max-w-[50px]
+                                  ${i === currentStepIndex ? 'text-primary-700' : 
+                                    i < currentStepIndex ? 'text-green-700' : 'text-gray-500'}`}>
+                    {stepItem.label}
+                  </span>
+                </div>
               ))}
             </div>
+            <div className="flex items-center mt-2 space-x-1">
+              {steps.map((_, i) => (
+                <div key={i} className={`h-1 flex-1 rounded-full transition-all duration-500
+                                        ${i <= currentStepIndex ? 'bg-primary-500' : 'bg-gray-200'}`}></div>
+              ))}
+            </div>
+          </div>
         </div>
         
-        <form
-          onSubmit={e => { e.preventDefault(); if (currentStepIndex === steps.length - 1) handleComplete(); else handleNext(); }}
-          className="px-6 py-6 space-y-6 overflow-y-auto flex-1 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100"
-          style={{minHeight: '300px'}}
-        >
-          {renderStepContent()}
-        </form>
+        {/* Content */}
+        <div className="flex-1 overflow-hidden">
+          <form
+            onSubmit={e => { e.preventDefault(); if (currentStepIndex === steps.length - 1) handleComplete(); else handleNext(); }}
+            className="h-full flex flex-col"
+          >
+            <div className="flex-1 overflow-y-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-6 space-y-4 sm:space-y-6">
+              {renderStepContent()}
+            </div>
 
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50 flex justify-between items-center sticky bottom-0">
-          <Button type="button" onClick={prevStep} disabled={currentStepIndex === 0} variant="outline" className="shadow-sm">Back</Button>
-          {currentStepIndex === steps.length - 1 ? (
-            <Button type="submit" variant="primary" onClick={handleComplete} className="shadow-md hover:shadow-lg">Complete & Pay</Button>
-          ) : (
-            <Button type="submit" variant="primary" onClick={handleNext} className="shadow-md hover:shadow-lg">Next: {steps[currentStepIndex+1]?.label || 'Finish'}</Button>
-          )}
+            {/* Footer */}
+            <div className="flex-shrink-0 px-3 sm:px-4 lg:px-6 py-3 sm:py-4 border-t border-gray-200 bg-gray-50">
+              <div className="flex flex-col-reverse sm:flex-row sm:justify-between sm:items-center gap-2">
+                <Button 
+                  type="button" 
+                  onClick={prevStep} 
+                  disabled={currentStepIndex === 0} 
+                  variant="outline" 
+                  className="w-full sm:w-auto order-2 sm:order-1"
+                  size="sm"
+                >
+                  Back
+                </Button>
+                <div className="flex flex-col sm:flex-row items-center gap-2 order-1 sm:order-2">
+                  {currentStepIndex < steps.length - 1 && (
+                    <span className="text-[10px] text-gray-500 text-center sm:text-right truncate">
+                      Next: {steps[currentStepIndex + 1]?.label}
+                    </span>
+                  )}
+                  {currentStepIndex === steps.length - 1 ? (
+                    <Button 
+                      type="submit" 
+                      variant="primary" 
+                      onClick={handleComplete} 
+                      className="w-full sm:w-auto bg-gradient-to-r from-primary-600 to-secondary-600 hover:from-primary-700 hover:to-secondary-700"
+                      size="sm"
+                    >
+                      Complete & Pay ₦10,750
+                    </Button>
+                  ) : (
+                    <Button 
+                      type="submit" 
+                      variant="primary" 
+                      onClick={handleNext} 
+                      className="w-full sm:w-auto"
+                      size="sm"
+                    >
+                      Continue
+                    </Button>
+                  )}
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </Modal>
